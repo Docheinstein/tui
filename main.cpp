@@ -40,18 +40,6 @@ int main() {
 
     using namespace Tui;
 
-    //    std::cout << red(green("11223344")).substr(Text::RawIndex{0}, Text::Length{3}).str() << std::endl;
-    //    std::cout << red(green("11223344")).substr(Text::RawIndex{0}, Text::RawLength{3}).str() << std::endl;
-    std::cout << red(green("11223344")).find('4', Text::RawIndex {0}).value() << std::endl;
-    exit(0);
-    //    Token t("hello", 1);
-    //    Decorator d("hello");
-
-    //    auto b {make_block()};
-    //    b << red("111111\n11") << endl;
-    //    Presenter(std::cout).present(std::move(b));
-    //    exit(0);
-
     auto b1 {make_block()};
     b1 << red("111111\n11") << endl;
     b1 << green("111111") << endl;
