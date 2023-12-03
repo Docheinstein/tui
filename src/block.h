@@ -19,7 +19,10 @@ struct Block : Node {
 
 Block& endl(Block&);
 
-Block& operator<<(const std::unique_ptr<Block>& block, const Text& text); // helper
+// Helpers for std::unique_ptr
+Block& operator<<(const std::unique_ptr<Block>& block, const Text& text);
+Block& operator<<(const std::unique_ptr<Block>& block, Block& (*manip)(const std::unique_ptr<Block>&));
+Block& endl(const std::unique_ptr<Block>&);
 } // namespace Tui
 
 #endif // BLOCK_H

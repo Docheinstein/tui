@@ -25,4 +25,14 @@ Block& endl(Block& b) {
 Block& operator<<(const std::unique_ptr<Block>& block, const Text& text) {
     return *block << text;
 }
+
+Block& operator<<(const std::unique_ptr<Block>& block, Block& (*manip)(const std::unique_ptr<Block>&)) {
+    return manip(block);
+}
+
+Block& endl(const std::unique_ptr<Block>& b) {
+    b->lines.emplace_back();
+    return *b;
+}
+
 } // namespace Tui
