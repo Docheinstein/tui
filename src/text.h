@@ -14,10 +14,10 @@ public:
     Text(T&& value) {
         std::string s;
 
-        if constexpr (std::is_integral_v<T>) {
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
             s = std::to_string(value);
         } else {
-            s = value;
+            s = std::forward<T>(value);
         }
 
         tokens.reserve(s.size());
