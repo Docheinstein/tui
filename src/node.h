@@ -3,7 +3,7 @@
 
 namespace Tui {
 struct Node {
-    enum class Type { Block, HLayout, VLayout };
+    enum class Type { Block, HLayout, VLayout, Divider };
 
     explicit Node(Type type) :
         type(type) {

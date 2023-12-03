@@ -2,6 +2,8 @@
 #include <iostream>
 
 #include "block.h"
+#include "divider.h"
+#include "factory.h"
 #include "hlayout.h"
 #include "presenter.h"
 #include "vlayout.h"
@@ -38,7 +40,7 @@ int main() {
 
     using namespace Tui;
 
-    auto b1 {std::make_unique<Block>()};
+    auto b1 {make_block()};
     b1 << red("111111") << endl;
     b1 << green("111111") << endl;
     b1 << "111111" << endl;
@@ -47,41 +49,43 @@ int main() {
     b1 << yellow("111111") << endl;
 
     // These will be expanded with spaces
-    auto b2 {std::make_unique<Block>(4 /* fixed width */)};
+    auto b2 {make_block(4 /* fixed width */)};
     b2 << "222" << endl;
     b2 << magenta("222") << endl;
     b2 << "222" << endl;
 
     // These will be truncated (decorators will be truncated properly)
-    auto b3 {std::make_unique<Block>(2 /* fixed width */)};
+    auto b3 {make_block(2 /* fixed width */)};
     b3 << "33333" << endl;
     b3 << cyan("33333") << endl;
 
-    auto b4 {std::make_unique<Block>()};
+    auto b4 {make_block()};
     b4 << "4444444" << endl;
     b4 << "4444444" << endl;
     b4 << "4444444" << endl;
 
-    auto b5 {std::make_unique<Block>()};
+    auto b5 {make_block()};
     b5 << "5555555555555" << endl;
     b5 << "5555555555555" << endl;
     b5 << "5555555555555" << endl;
     b5 << "5555555555555" << endl;
 
-    auto h2 {std::make_unique<HLayout>()};
+    auto h2 {make_horizontal_layout()};
     h2->addNode(std::move(b2));
+    h2->addNode(make_divider("|"));
     h2->addNode(std::move(b3));
 
-    auto v2 {std::make_unique<VLayout>()};
+    auto v2 {make_vertical_layout()};
     v2->addNode(std::move(h2));
     v2->addNode(std::move(b4));
 
-    auto h1 {std::make_unique<HLayout>()};
+    auto h1 {make_horizontal_layout()};
     h1->addNode(std::move(b1));
     h1->addNode(std::move(v2));
 
-    auto v1 {std::make_unique<VLayout>()};
+    auto v1 {make_vertical_layout()};
     v1->addNode(std::move(h1));
+    v1->addNode(make_divider("-"));
     v1->addNode(std::move(b5));
 
     Presenter p {std::cout};

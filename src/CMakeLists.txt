@@ -8,7 +8,11 @@ target_sources(tui PRIVATE
     decorator.cpp
     decorator.h
     decorators.cpp
+    decorators.h
     decorators.tpp
+    divider.h
+    factory.cpp
+    factory.h
     hlayout.h
     node.h
     presenter.cpp
