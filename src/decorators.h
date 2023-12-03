@@ -13,6 +13,8 @@ Text attr(Text&& text);
 
 Text bold(Text&& text);
 
+Text reset();
+
 Text red(Text&& text);
 Text lightred(Text&& text);
 Text green(Text&& text);

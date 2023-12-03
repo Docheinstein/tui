@@ -1,5 +1,6 @@
 #include "presenter.h"
 #include "block.h"
+#include "decorators.h"
 #include "divider.h"
 #include "hlayout.h"
 #include "vlayout.h"
@@ -201,7 +202,7 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
 
                 // Eventually strip out empty new lines
                 for (int32_t i = static_cast<int32_t>(b->node.lines.size()) - 1; i >= 0; i--) {
-                    if (b->node.lines[i].empty())
+                    if (b->node.lines[i].size() == 0)
                         b->node.lines.pop_back();
                 }
 
@@ -212,7 +213,7 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
                 } else {
                     // Variable width
                     for (const auto& l : b->node.lines) {
-                        b->width = std::max(b->width.value_or(0), l.size());
+                        b->width = std::max(b->width.value_or(0), l.size().value);
                     }
                 }
                 b->height = b->node.lines.size();
@@ -335,7 +336,19 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
 
                     if (b->line < b->node.lines.size()) {
                         // Present next line
-                        os << b->node.lines[b->line].rpad(*b->width).substr(0, *b->width).str();
+                        const Text& l = b->node.lines[b->line];
+                        Text t {};
+                        uint32_t w = *b->width;
+                        if (t.size() < w)
+                            t = l.rpad(Text::Length {w});
+                        else if (t.size() > w)
+                            t = l.substr(Text::RawIndex {0}, Text::Length {w});
+                        else
+                            t = l;
+                        os << t.str();
+
+                        // Always push the reset attribute in case substr truncated it
+                        os << reset().str();
                     } else {
                         // No more lines to present: just fill the block's width
                         os << std::string(*b->width, ' ');

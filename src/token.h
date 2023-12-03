@@ -7,9 +7,15 @@
 
 namespace Tui {
 struct Token {
-    Token(const std::string& string, bool size);
-    Token(std::string&& string, bool size);
-    explicit Token(char ch);
+    template <typename T>
+    Token(T&& str, bool size) :
+        string(std::forward<T>(str)),
+        size(size) {
+    }
+
+    explicit Token(char ch) :
+        Token(std::string {ch}, true) {
+    }
 
     std::string string;
     bool size {};

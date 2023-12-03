@@ -5,7 +5,6 @@ target_sources(tui PRIVATE
     block.h
     container.cpp
     container.h
-    decorator.cpp
     decorator.h
     decorators.cpp
     decorators.h
@@ -19,8 +18,8 @@ target_sources(tui PRIVATE
     presenter.h
     text.cpp
     text.h
-    token.cpp
     token.h
+    traits.h
     vlayout.h
 )
 

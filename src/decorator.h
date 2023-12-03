@@ -5,7 +5,12 @@
 
 namespace Tui {
 struct Decorator : Text {
-    explicit Decorator(std::string&& s);
+    template <typename T>
+    Decorator(T&& str) :
+        Text() {
+        tokens.emplace_back(std::forward<T>(str), 0);
+        length = 0;
+    }
 };
 } // namespace Tui
 #endif // DECORATOR_H

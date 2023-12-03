@@ -1,13 +1,7 @@
 #include "decorators.h"
 
-#define COLOR(c)                                                                                                       \
-    Decorator {                                                                                                        \
-        "\033[38;5;" #c "m"                                                                                            \
-    }
-#define ATTR(c)                                                                                                        \
-    Decorator {                                                                                                        \
-        "\033[" #c "m"                                                                                                 \
-    }
+#define COLOR(c) Decorator("\033[38;5;" #c "m")
+#define ATTR(c) Decorator("\033[" #c "m")
 #define RESET() ATTR(0)
 #define COLORIZE(c, t) COLOR(c) + t + RESET()
 #define ATTRIBUTIZE(c, t) ATTR(c) + t + RESET()
@@ -15,6 +9,10 @@
 namespace Tui {
 Text bold(Text&& text) {
     return ATTRIBUTIZE(1, text);
+}
+
+Text reset() {
+    return Text {} + RESET();
 }
 
 Text red(Text&& text) {

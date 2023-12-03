@@ -8,8 +8,9 @@ This has been made to create friendly interface for the Debugger of [Docboy](htt
 
 * Horizontal Layouts
 * Vertical Layouts
-* Blocks (automatic or fixed size)
-* Colors
+* Blocks
+* Dividers
+* Colors!
 
 ### Example
 

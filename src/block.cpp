@@ -7,9 +7,24 @@ Block::Block(std::optional<uint32_t> width) :
 }
 
 Block& Tui::Block::operator<<(const Text& text) {
+    // No lines yet: add one
     if (lines.empty())
         lines.emplace_back();
-    lines.back() += text;
+
+    // Split text in lines by \n
+    Text::RawIndex i {0};
+
+    std::optional<Text::RawIndex> newLine;
+    do {
+        newLine = text.find('\n', i);
+        if (newLine) {
+            lines.back() += text.substr(i, Text::RawLength {*newLine - i});
+            lines.emplace_back();
+            i = Text::Index {*newLine + 1};
+        }
+    } while (newLine);
+
+    lines.back() += text.substr(i);
     return *this;
 }
 
