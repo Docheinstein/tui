@@ -26,8 +26,9 @@ Text Text::substr(RawIndex start_r) const {
 Text Text::substr(RawIndex start_r, RawLength len_r) const {
     Text text;
     uint32_t n = 0;
-    for (uint32_t i = start_r; i < tokens.size() && n < len_r; i++, n++) {
+    for (uint32_t i = start_r; i < tokens.size() && n < len_r; i++) {
         text += tokens[i];
+        n++;
     }
 
     return text;
@@ -36,8 +37,9 @@ Text Text::substr(RawIndex start_r, RawLength len_r) const {
 Text Text::substr(RawIndex start_r, Length len) const {
     Text text;
     uint32_t n = 0;
-    for (uint32_t i = start_r; i < tokens.size() && n < len; i++, n += tokens[i].size) {
+    for (uint32_t i = start_r; i < tokens.size() && n < len; i++) {
         text += tokens[i];
+        n += tokens[i].size;
     }
     return text;
 }

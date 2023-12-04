@@ -331,56 +331,60 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
                 PNode* node = stack.back();
                 stack.pop_back();
 
-                if (node->type & PNode::Type::Block) {
-                    auto* b = static_cast<PBlock*>(node);
+                if (node->type & PNode::Type::Content) {
+                    auto* c = static_cast<PContent*>(node);
 
-                    if (b->line < b->node.lines.size()) {
-                        // Present next line
-                        const Text& l = b->node.lines[b->line];
-                        Text t {};
-                        uint32_t w = *b->width;
-                        if (t.size() < w)
-                            t = l.rpad(Text::Length {w});
-                        else if (t.size() > w)
-                            t = l.substr(Text::RawIndex {0}, Text::Length {w});
-                        else
-                            t = l;
-                        os << t.str();
+                    if (!c->done) {
+                        if (node->type & PNode::Type::Block) {
+                            auto* b = static_cast<PBlock*>(node);
 
-                        // Always push the reset attribute in case substr truncated it
-                        os << reset().str();
+                            // Present next line
+                            const Text& rawLine = b->node.lines[b->line];
+                            Text t {};
+                            uint32_t w = *b->width;
+                            if (rawLine.size() < w)
+                                t = rawLine.rpad(Text::Length {w});
+                            else if (rawLine.size() > w)
+                                t = rawLine.substr(Text::RawIndex {0}, Text::Length {w});
+                            else
+                                t = rawLine;
+                            os << t.str();
+
+                            // Always push the reset attribute in case substr truncated it
+                            os << reset().str();
+                        } else if (node->type & PNode::Type::Divider) {
+                            auto* d = static_cast<PDivider*>(node);
+
+                            for (uint32_t i = 0; i < *node->width; i += d->node.text.size()) {
+                                os << d->node.text.str();
+                            }
+                        }
                     } else {
-                        // No more lines to present: just fill the block's width
-                        os << std::string(*b->width, ' ');
+                        // Nothing more to render: just fill the node space
+                        os << std::string(*c->width, ' ');
                     }
 
-                    if (b->endl)
+                    // Go to a new line if this is an ending content
+                    if (c->endl)
                         os << std::endl;
 
-                    b->line++;
-                } else if (node->type & PNode::Type::Divider) {
-                    auto* d = static_cast<PDivider*>(node);
-
-                    for (uint32_t i = 0; i < *node->width; i += d->node.text.size()) {
-                        os << d->node.text.str();
-                    }
-
-                    if (d->endl)
-                        os << std::endl;
-
-                    d->line++;
+                    c->line++;
                 } else if (node->node.type == Node::Type::HLayout) {
                     auto* h = static_cast<PHLayout*>(node);
                     // Push reversed to visit pre-order
+                    // Always push all the nodes: they are all processed in parallel.
                     for (int32_t i = static_cast<int32_t>(h->children.size()) - 1; i >= 0; i--)
                         stack.push_back(&*h->children[i]);
                 } else if (node->node.type == Node::Type::VLayout) {
                     auto* v = static_cast<PVLayout*>(node);
-                    for (const auto& n : v->children) {
-                        if (!n->done) {
-                            stack.push_back(&*n);
-                            break;
-                        }
+                    if (!v->children.empty()) {
+                        // Push the first node that has not done yet.
+                        // If every node is done, we push the last one,
+                        // so that it will fill the remaining space.
+                        uint32_t i = 0;
+                        while (i < v->children.size() - 1 && v->children[i]->done)
+                            i++;
+                        stack.push_back(&*v->children[i]);
                     }
                 }
             }

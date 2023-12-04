@@ -5,11 +5,11 @@
 #include <optional>
 
 namespace Tui {
-class Block;
-class HLayout;
-class VLayout;
-class Divider;
-class Text;
+struct Block;
+struct HLayout;
+struct VLayout;
+struct Divider;
+struct Text;
 
 std::unique_ptr<Block> make_block(std::optional<uint32_t> width = std::nullopt);
 std::unique_ptr<HLayout> make_horizontal_layout();
