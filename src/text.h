@@ -18,7 +18,7 @@ public:
     Text();
 
     template <typename T>
-    Text(T&& value) {
+    Text(T&& value, std::optional<Length> len = std::nullopt) {
         std::string s;
 
         if constexpr (std::is_integral_v<std::decay_t<T>>) {
@@ -31,7 +31,7 @@ public:
         for (const auto& c : s) {
             tokens.emplace_back(c);
         }
-        length = s.size();
+        length = len ? *len : s.size();
     }
 
     [[nodiscard]] std::string str() const;
