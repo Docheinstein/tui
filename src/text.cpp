@@ -66,12 +66,6 @@ Text Text::lpad(Length len, char ch) const {
     return Text {std::string(len - length, ch)} + *this;
 }
 
-Text& Text::operator+=(const Token& t) {
-    tokens.push_back(t);
-    length = length + t.size;
-    return *this;
-}
-
 Text& Text::operator+=(const Text& s) {
     tokens.insert(tokens.end(), s.tokens.begin(), s.tokens.end());
     length = length + s.length;

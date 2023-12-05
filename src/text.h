@@ -17,8 +17,14 @@ public:
 
     Text();
 
-    template <typename T>
-    Text(T&& value, std::optional<Length> len = std::nullopt) {
+    template <typename T, std::enable_if_t<std::is_same_v<std::decay_t<T>, Token>, bool> = true>
+    Text(T&& value) {
+        tokens.emplace_back(std::forward<T>(value));
+        length = value.size;
+    }
+
+    template <typename T, std::enable_if_t<std::negation_v<std::is_same<std::decay_t<T>, Token>>, bool> = true>
+    Text(T&& value) {
         std::string s;
 
         if constexpr (std::is_integral_v<std::decay_t<T>>) {
@@ -31,8 +37,25 @@ public:
         for (const auto& c : s) {
             tokens.emplace_back(c);
         }
-        length = len ? *len : s.size();
+        length = s.size();
     }
+
+    template <typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, Token>>>
+    Text& operator=(const Token& t) {
+        tokens.push_back(t);
+        length = t.size;
+        return *this;
+    }
+
+    template <typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, Token>>>
+    Text& operator+=(const Token& t) {
+        tokens.push_back(t);
+        length = length + t.size;
+        return *this;
+    }
+
+    Text& operator+=(const Text& s);
+    friend Text operator+(const Text& s1, const Text& s2);
 
     [[nodiscard]] std::string str() const;
     [[nodiscard]] RawLength size_r() const;
@@ -44,10 +67,6 @@ public:
     [[nodiscard]] Text lpad(Length len, char ch = ' ') const;
     [[nodiscard]] std::optional<RawIndex> find(char ch, RawIndex pos = RawIndex {0},
                                                RawLength len = RawLength {UINT32_MAX}) const;
-
-    Text& operator+=(const Token& t);
-    Text& operator+=(const Text& s);
-    friend Text operator+(const Text& s1, const Text& s2);
 
 protected:
     std::vector<Token> tokens;

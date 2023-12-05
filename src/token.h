@@ -8,17 +8,17 @@
 namespace Tui {
 struct Token {
     template <typename T>
-    Token(T&& str, bool size) :
+    Token(T&& str, uint32_t size) :
         string(std::forward<T>(str)),
         size(size) {
     }
 
     explicit Token(char ch) :
-        Token(std::string {ch}, true) {
+        Token(std::string {ch}, 1) {
     }
 
     std::string string;
-    bool size {};
+    uint32_t size {};
 };
 } // namespace Tui
 #endif // TOKEN_H
