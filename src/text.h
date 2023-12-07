@@ -16,10 +16,11 @@ public:
     using RawIndex = Explicit<uint32_t, struct RawIndexTag>;
 
     Text();
-    explicit Text(const Token& t);
-    explicit Text(Token&& t);
+    Text(const Token& token);
+    Text(Token&& token);
 
-    template <typename T, typename = std::enable_if_t<std::negation_v<std::is_same<std::decay_t<T>, Text>>>>
+    template <typename T, typename = std::enable_if_t<std::negation_v<std::disjunction<
+                              std::is_same<std::decay_t<T>, Text>, std::is_same<std::decay_t<T>, Token>>>>>
     Text(T&& value) {
         std::string s;
 
@@ -36,13 +37,14 @@ public:
         length = s.size();
     }
 
-    Text& operator=(const Token& t);
-    Text& operator=(Token&& t);
-    Text& operator+=(Token&& t);
-    Text& operator+=(const Token& t);
+    Text& operator=(const Token& token);
+    Text& operator=(Token&& token);
 
-    Text& operator+=(const Text& s);
-    friend Text operator+(const Text& s1, const Text& s2);
+    Text& operator+=(const Token& token);
+    Text& operator+=(Token&& token);
+    Text& operator+=(const Text& text);
+
+    friend Text operator+(const Text& text1, const Text& text2);
 
     [[nodiscard]] std::string str() const;
     [[nodiscard]] Length size() const;

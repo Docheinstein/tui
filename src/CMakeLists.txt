@@ -1,6 +1,6 @@
 add_library(tui STATIC)
 
-target_sources(tui PRIVATE
+target_sources(tui PUBLIC
     block.cpp
     block.h
     container.cpp
@@ -23,5 +23,5 @@ target_sources(tui PRIVATE
     vlayout.h
 )
 
-target_include_directories(tui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(tui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 

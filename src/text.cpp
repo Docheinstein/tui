@@ -71,28 +71,21 @@ Text Text::lpad(Length len, char ch) const {
     return Text {std::string(len - length, ch)} + *this;
 }
 
-Text& Text::operator+=(const Text& s) {
-    tokens.insert(tokens.end(), s.tokens.begin(), s.tokens.end());
-    length = length + s.length;
+Text& Text::operator=(const Token& token) {
+    length = token.size;
+    tokens.push_back(token);
     return *this;
 }
 
-Text operator+(const Text& t1, const Text& t2) {
-    Text text;
-    text += t1;
-    text += t2;
-    return text;
+Text& Text::operator=(Token&& token) {
+    length = token.size;
+    tokens.emplace_back(std::move(token));
+    return *this;
 }
 
-Text& Text::operator=(const Token& t) {
-    length = t.size;
+Text& Text::operator+=(const Token& t) {
+    length = length + t.size;
     tokens.push_back(t);
-    return *this;
-}
-
-Text& Text::operator=(Token&& t) {
-    length = t.size;
-    tokens.emplace_back(std::move(t));
     return *this;
 }
 
@@ -102,9 +95,17 @@ Text& Text::operator+=(Token&& t) {
     return *this;
 }
 
-Text& Text::operator+=(const Token& t) {
-    length = length + t.size;
-    tokens.push_back(t);
+Text& Text::operator+=(const Text& s) {
+    tokens.insert(tokens.end(), s.tokens.begin(), s.tokens.end());
+    length = length + s.length;
     return *this;
 }
+
+Text operator+(const Text& text1, const Text& text2) {
+    Text text;
+    text += text1;
+    text += text2;
+    return text;
+}
+
 } // namespace Tui
