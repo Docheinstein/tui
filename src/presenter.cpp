@@ -25,14 +25,14 @@ struct PNode {
         static constexpr PNodeType Container = HLayout | VLayout;
     };
 
-    explicit PNode(Type::PNodeType type, Node& node, PNode* parent) :
+    explicit PNode(Type::PNodeType type, const Node& node, PNode* parent) :
         type(type),
         node(node),
         parent(parent) {
     }
 
     Type::PNodeType type;
-    Node& node;
+    const Node& node;
     PNode* parent {};
 
     std::optional<uint32_t> width {};
@@ -42,7 +42,7 @@ struct PNode {
 };
 
 struct PContent : PNode {
-    PContent(Type::PNodeType type, Node& node, PNode* parent) :
+    PContent(Type::PNodeType type, const Node& node, PNode* parent) :
         PNode(type, node, parent) {
     }
 
@@ -51,64 +51,64 @@ struct PContent : PNode {
 };
 
 struct PBlock : PContent {
-    PBlock(Block& node, PNode* parent) :
+    PBlock(const Block& node, PNode* parent) :
         PContent(Type::Block, node, parent),
         node(node) {
     }
 
-    Block& node;
+    const Block& node;
 };
 
 struct PDivider : PContent {
-    PDivider(Type::PNodeType type, Divider& node, PNode* parent) :
+    PDivider(Type::PNodeType type, const Divider& node, PNode* parent) :
         PContent(type, node, parent),
         node(node) {
     }
 
-    Divider& node;
+    const Divider& node;
 };
 
 struct PHDivider : PDivider {
-    PHDivider(Divider& node, PNode* parent) :
+    PHDivider(const Divider& node, PNode* parent) :
         PDivider(Type::HDivider, node, parent) {
     }
 };
 
 struct PVDivider : PDivider {
-    PVDivider(Divider& node, PNode* parent) :
+    PVDivider(const Divider& node, PNode* parent) :
         PDivider(Type::VDivider, node, parent) {
     }
 };
 
 struct PContainer : PNode {
-    PContainer(Type::PNodeType type, Container& node, PNode* parent) :
+    PContainer(Type::PNodeType type, const Container& node, PNode* parent) :
         PNode(type, node, parent),
         node(node) {
     }
 
-    Container& node;
+    const Container& node;
     std::vector<std::unique_ptr<PNode>> children;
 };
 
 struct PHLayout : PContainer {
-    PHLayout(HLayout& node, PNode* parent) :
+    PHLayout(const HLayout& node, PNode* parent) :
         PContainer(Type::HLayout, node, parent),
         node(node) {
     }
 
-    HLayout& node;
+    const HLayout& node;
 };
 
 struct PVLayout : PContainer {
-    PVLayout(VLayout& node, PNode* parent) :
+    PVLayout(const VLayout& node, PNode* parent) :
         PContainer(Type::VLayout, node, parent),
         node(node) {
     }
 
-    VLayout& node;
+    const VLayout& node;
 };
 
-void Presenter::present(std::unique_ptr<Node>&& rootNode) {
+void Presenter::present(const Node& rootNode) {
     /*
      * Example of a layout with the associated tree.
      *
@@ -143,23 +143,23 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
     // 1) First visit of the tree.
     //    - Wrap each node with a presentation node (wrapper that adds helpers).
     {
-        const auto makePNode = [](Node& node, PNode* parent) -> std::unique_ptr<PNode> {
+        const auto makePNode = [](const Node& node, PNode* parent) -> std::unique_ptr<PNode> {
             if (node.type == Node::Type::Block) {
-                return std::make_unique<PBlock>(static_cast<Block&>(node), parent);
+                return std::make_unique<PBlock>(static_cast<const Block&>(node), parent);
             } else if (node.type == Node::Type::Divider) {
                 if (parent->node.type == Node::Type::HLayout)
-                    return std::make_unique<PHDivider>(static_cast<Divider&>(node), parent);
+                    return std::make_unique<PHDivider>(static_cast<const Divider&>(node), parent);
                 if (parent->node.type == Node::Type::VLayout)
-                    return std::make_unique<PVDivider>(static_cast<Divider&>(node), parent);
+                    return std::make_unique<PVDivider>(static_cast<const Divider&>(node), parent);
             } else if (node.type == Node::Type::HLayout) {
-                return std::make_unique<PHLayout>(static_cast<HLayout&>(node), parent);
+                return std::make_unique<PHLayout>(static_cast<const HLayout&>(node), parent);
             } else if (node.type == Node::Type::VLayout) {
-                return std::make_unique<PVLayout>(static_cast<VLayout&>(node), parent);
+                return std::make_unique<PVLayout>(static_cast<const VLayout&>(node), parent);
             }
             return nullptr;
         };
 
-        root = makePNode(*rootNode, nullptr);
+        root = makePNode(rootNode, nullptr);
 
         std::vector<PNode*> stack;
         stack.push_back(&*root);
@@ -200,13 +200,14 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
             if (node->type & PNode::Type::Block) {
                 auto* b = static_cast<PBlock*>(node);
 
-                // Eventually strip out empty new lines
-                for (int32_t i = static_cast<int32_t>(b->node.lines.size()) - 1; i >= 0; i--) {
-                    if (b->node.lines[i].size() == 0)
-                        b->node.lines.pop_back();
-                }
-
                 // Compute block's dimensions
+
+                // Do not take ending empty lines into account for block's height
+                int32_t h = static_cast<int32_t>(b->node.lines.size()) - 1;
+                while (h >= 0 && b->node.lines[h].size() == 0)
+                    h--;
+                b->height = std::max(0, h + 1);
+
                 if (b->node.width) {
                     // Fixed width
                     b->width = *b->node.width;
@@ -216,7 +217,6 @@ void Presenter::present(std::unique_ptr<Node>&& rootNode) {
                         b->width = std::max(b->width.value_or(0), l.size().value);
                     }
                 }
-                b->height = b->node.lines.size();
             } else if (node->type & PNode::Type::HDivider) {
                 auto* d = static_cast<PDivider*>(node);
                 d->width = d->node.text.size();

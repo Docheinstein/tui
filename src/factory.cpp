@@ -18,7 +18,7 @@ std::unique_ptr<VLayout> make_vertical_layout() {
     return std::make_unique<VLayout>();
 }
 
-std::unique_ptr<Divider> make_divider(const Text& text) {
-    return std::make_unique<Divider>(text);
+std::unique_ptr<Divider> make_divider(Text&& text) {
+    return std::make_unique<Divider>(std::move(text));
 }
 } // namespace Tui

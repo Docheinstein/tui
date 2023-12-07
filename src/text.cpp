@@ -3,6 +3,15 @@
 namespace Tui {
 Text::Text() = default;
 
+Text::Text(const Token& t) {
+    length = t.size;
+    tokens.push_back(t);
+}
+Text::Text(Token&& t) {
+    length = t.size;
+    tokens.emplace_back(std::move(t));
+}
+
 std::string Text::str() const {
     std::string s;
     for (const auto& t : tokens) {
@@ -13,10 +22,6 @@ std::string Text::str() const {
 
 Text::Length Text::size() const {
     return length;
-}
-
-Text::RawLength Text::size_r() const {
-    return RawLength(tokens.size());
 }
 
 Text Text::substr(RawIndex start_r) const {
@@ -77,5 +82,29 @@ Text operator+(const Text& t1, const Text& t2) {
     text += t1;
     text += t2;
     return text;
+}
+
+Text& Text::operator=(const Token& t) {
+    length = t.size;
+    tokens.push_back(t);
+    return *this;
+}
+
+Text& Text::operator=(Token&& t) {
+    length = t.size;
+    tokens.emplace_back(std::move(t));
+    return *this;
+}
+
+Text& Text::operator+=(Token&& t) {
+    length = length + t.size;
+    tokens.emplace_back(std::move(t));
+    return *this;
+}
+
+Text& Text::operator+=(const Token& t) {
+    length = length + t.size;
+    tokens.push_back(t);
+    return *this;
 }
 } // namespace Tui

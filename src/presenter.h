@@ -10,7 +10,7 @@ class Presenter {
 public:
     explicit Presenter(std::ostream& os);
 
-    void present(std::unique_ptr<Node>&& node);
+    void present(const Node& node);
 
 private:
     std::ostream& os;

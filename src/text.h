@@ -16,18 +16,14 @@ public:
     using RawIndex = Explicit<uint32_t, struct RawIndexTag>;
 
     Text();
+    explicit Text(const Token& t);
+    explicit Text(Token&& t);
 
-    template <typename T, std::enable_if_t<std::is_same_v<std::decay_t<T>, Token>, bool> = true>
-    Text(T&& value) {
-        tokens.emplace_back(std::forward<T>(value));
-        length = value.size;
-    }
-
-    template <typename T, std::enable_if_t<std::negation_v<std::is_same<std::decay_t<T>, Token>>, bool> = true>
+    template <typename T, typename = std::enable_if_t<std::negation_v<std::is_same<std::decay_t<T>, Text>>>>
     Text(T&& value) {
         std::string s;
 
-        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+        if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
             s = std::to_string(value);
         } else {
             s = std::forward<T>(value);
@@ -40,25 +36,15 @@ public:
         length = s.size();
     }
 
-    template <typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, Token>>>
-    Text& operator=(const Token& t) {
-        tokens.push_back(t);
-        length = t.size;
-        return *this;
-    }
-
-    template <typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, Token>>>
-    Text& operator+=(const Token& t) {
-        tokens.push_back(t);
-        length = length + t.size;
-        return *this;
-    }
+    Text& operator=(const Token& t);
+    Text& operator=(Token&& t);
+    Text& operator+=(Token&& t);
+    Text& operator+=(const Token& t);
 
     Text& operator+=(const Text& s);
     friend Text operator+(const Text& s1, const Text& s2);
 
     [[nodiscard]] std::string str() const;
-    [[nodiscard]] RawLength size_r() const;
     [[nodiscard]] Length size() const;
     [[nodiscard]] Text substr(RawIndex start) const;
     [[nodiscard]] Text substr(RawIndex start, RawLength len) const;

@@ -38,8 +38,7 @@ int main() {
      *     B2     B3
      */
 
-    using namespace Tui;
-
+#if 0
     auto b1 {make_block()};
     b1 << red("111111\n11") << endl;
     b1 << green("111111") << endl;
@@ -89,7 +88,33 @@ int main() {
     v1->addNode(std::move(b5));
 
     Presenter p {std::cout};
-    p.present(std::move(v1));
+    p.present(*v1);
+#endif
+    using namespace Tui;
+
+    auto b1 {make_block()};
+    b1 << "111" << endl;
+    b1 << "111" << endl;
+
+    auto b2 {make_block()};
+    b2 << "22" << endl;
+    b2 << "22" << endl;
+
+    auto b3 {make_block()};
+    b3 << red("333333") << endl;
+
+    auto h1 {make_horizontal_layout()};
+    h1->addNode(std::move(b1));
+    h1->addNode(make_divider("|"));
+    h1->addNode(std::move(b2));
+
+    auto v1 {make_vertical_layout()};
+    v1->addNode(std::move(h1));
+    v1->addNode(make_divider("-"));
+    v1->addNode(std::move(b3));
+
+    Presenter p {std::cout};
+    p.present(*v1);
 
     return 0;
 }

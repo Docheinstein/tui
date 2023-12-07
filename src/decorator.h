@@ -5,7 +5,7 @@
 
 namespace Tui {
 struct Decorator : Text {
-    template <typename T>
+    template <typename T, typename = std::enable_if_t<std::negation_v<std::is_base_of<Text, std::decay_t<T>>>>>
     Decorator(T&& str) :
         Text() {
         tokens.emplace_back(std::forward<T>(str), 0);

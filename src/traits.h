@@ -17,6 +17,7 @@ struct Explicit {
         value = val;
         return *this;
     }
+
     T value;
 };
 } // namespace Tui

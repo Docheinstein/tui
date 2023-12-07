@@ -25,6 +25,7 @@ Block& Tui::Block::operator<<(const Text& text) {
     } while (newLine);
 
     lines.back() += text.substr(i);
+
     return *this;
 }
 
@@ -46,8 +47,7 @@ Block& operator<<(const std::unique_ptr<Block>& block, Block& (*manip)(const std
 }
 
 Block& endl(const std::unique_ptr<Block>& b) {
-    b->lines.emplace_back();
-    return *b;
+    return endl(*b);
 }
 
 } // namespace Tui
