@@ -29,8 +29,9 @@ Text cyan(Text&& text);
 Text lightcyan(Text&& text);
 Text gray(Text&& text);
 Text lightgray(Text&& text);
+Text lightestgray(Text&& text);
 Text darkgray(Text&& text);
-Text verydarkgray(Text&& text);
+Text darkestgray(Text&& text);
 } // namespace Tui
 
 #include "decorators.tpp"
