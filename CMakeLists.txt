@@ -1,12 +1,15 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.17)
 project(tui)
 
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(src)
+add_subdirectory(include)
 
-add_executable(tui-example)
+option(TUI_BUILD_EXAMPLES "Build TUI examples" OFF)
 
-target_sources(tui-example PRIVATE main.cpp)
-
-target_link_libraries(tui-example PRIVATE tui)
+if (TUI_BUILD_EXAMPLES)
+    add_executable(tui-example)
+    target_sources(tui-example PRIVATE example/main.cpp)
+    target_link_libraries(tui-example PRIVATE tui)
+endif ()

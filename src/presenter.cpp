@@ -1,9 +1,9 @@
-#include "presenter.h"
-#include "block.h"
-#include "decorators.h"
-#include "divider.h"
-#include "hlayout.h"
-#include "vlayout.h"
+#include "tui/presenter.h"
+#include "tui/block.h"
+#include "tui/decorators.h"
+#include "tui/divider.h"
+#include "tui/hlayout.h"
+#include "tui/vlayout.h"
 #include <iostream>
 
 namespace Tui {

@@ -1,4 +1,4 @@
-#include "text.h"
+#include "tui/text.h"
 
 namespace Tui {
 Text::Text() = default;

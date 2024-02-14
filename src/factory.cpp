@@ -1,9 +1,9 @@
-#include "factory.h"
-#include "block.h"
-#include "divider.h"
-#include "hlayout.h"
-#include "text.h"
-#include "vlayout.h"
+#include "tui/factory.h"
+#include "tui/block.h"
+#include "tui/divider.h"
+#include "tui/hlayout.h"
+#include "tui/text.h"
+#include "tui/vlayout.h"
 
 namespace Tui {
 std::unique_ptr<Block> make_block(std::optional<uint32_t> width) {

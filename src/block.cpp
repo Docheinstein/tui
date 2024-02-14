@@ -1,4 +1,4 @@
-#include "block.h"
+#include "tui/block.h"
 
 namespace Tui {
 Block::Block(std::optional<uint32_t> width) :
