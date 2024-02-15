@@ -1,4 +1,4 @@
-add_library(tui STATIC)
+add_library(tui)
 
 target_sources(tui PUBLIC
     block.cpp
