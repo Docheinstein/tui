@@ -69,7 +69,7 @@ cmake ..
 
 ### Usage
 
-To use TUI as a static library with CMake, copy `src` somewhere in your project directory and rename it to `tui`,
+To use TUI as a static library with CMake, copy it or add it as a submodule,
 then add to your `CMakeLists.txt`:
 
 ```
