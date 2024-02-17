@@ -97,7 +97,7 @@ Text& Text::operator+=(Token&& t) {
 
 Text& Text::operator+=(const Text& s) {
     tokens.insert(tokens.end(), s.tokens.begin(), s.tokens.end());
-    length = length + s.length;
+    length = length + s.length.value;
     return *this;
 }
 
