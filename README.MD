@@ -59,14 +59,6 @@ But with a bit more effort you can obtain something like this:
 
 ![DocBoy Debugger](images/docboy-debugger.png)
 
-### Build
-
-```
-mkdir build
-cmake ..
-```
-
-
 ### Usage
 
 To use TUI as a static library with CMake, copy it or add it as a submodule,
