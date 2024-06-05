@@ -9,7 +9,7 @@ namespace Tui {
 struct Container : Node {
     explicit Container(Node::Type type);
 
-    void addNode(std::unique_ptr<Node>&& node);
+    void add_node(std::unique_ptr<Node>&& node);
 
     std::vector<std::unique_ptr<Node>> children;
 };

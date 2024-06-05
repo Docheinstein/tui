@@ -8,7 +8,7 @@
 namespace Tui {
 struct HLayout : Container {
     explicit HLayout() :
-        Container(Node::Type::HLayout) {
+        Container {Node::Type::HLayout} {
     }
 };
 } // namespace Tui

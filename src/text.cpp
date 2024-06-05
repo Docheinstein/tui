@@ -7,6 +7,7 @@ Text::Text(const Token& t) {
     length = t.size;
     tokens.push_back(t);
 }
+
 Text::Text(Token&& t) {
     length = t.size;
     tokens.emplace_back(std::move(t));
@@ -53,21 +54,24 @@ std::optional<Text::RawIndex> Text::find(char ch, RawIndex pos_r, RawLength len_
     uint32_t n = 0;
     for (uint32_t i = pos_r; i < tokens.size() && n < len_r; i++, n++) {
         const auto& token = tokens[i];
-        if (!token.string.empty() && token.string[0] == ch)
+        if (!token.string.empty() && token.string[0] == ch) {
             return RawIndex {i};
+        }
     }
     return std::nullopt;
 }
 
 Text Text::rpad(Length len, char ch) const {
-    if (length >= len)
+    if (length >= len) {
         return *this;
+    }
     return *this + Text {std::string(len - length, ch)};
 }
 
 Text Text::lpad(Length len, char ch) const {
-    if (length >= len)
+    if (length >= len) {
         return *this;
+    }
     return Text {std::string(len - length, ch)} + *this;
 }
 

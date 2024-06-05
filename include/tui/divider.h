@@ -7,8 +7,8 @@
 namespace Tui {
 struct Divider : Node {
     explicit Divider(Text&& text) :
-        Node(Node::Type::Divider),
-        text(std::move(text)) {
+        Node {Node::Type::Divider},
+        text {std::move(text)} {
     }
 
     Text text;

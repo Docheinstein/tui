@@ -34,14 +34,14 @@ auto b3{make_block()};
 b3 << red("333333") << endl;
 
 auto h1{make_horizontal_layout()};
-h1->addNode(std::move(b1));
-h1->addNode(make_divider("|"));
-h1->addNode(std::move(b2));
+h1->add_node(std::move(b1));
+h1->add_node(make_divider("|"));
+h1->add_node(std::move(b2));
 
 auto v1{make_vertical_layout()};
-v1->addNode(std::move(h1));
-v1->addNode(make_divider("-"));
-v1->addNode(std::move(b3));
+v1->add_node(std::move(h1));
+v1->add_node(make_divider("-"));
+v1->add_node(std::move(b3));
 
 Presenter p {std::cout};
 p.present(*v1);

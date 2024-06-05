@@ -8,7 +8,7 @@
 
 namespace Tui {
 Presenter::Presenter(std::ostream& os) :
-    os(os) {
+    os {os} {
 }
 
 struct PNode {
@@ -43,7 +43,7 @@ struct PNode {
 
 struct PContent : PNode {
     PContent(Type::PNodeType type, const Node& node, PNode* parent) :
-        PNode(type, node, parent) {
+        PNode {type, node, parent} {
     }
 
     bool endl {};
@@ -52,8 +52,8 @@ struct PContent : PNode {
 
 struct PBlock : PContent {
     PBlock(const Block& node, PNode* parent) :
-        PContent(Type::Block, node, parent),
-        node(node) {
+        PContent {Type::Block, node, parent},
+        node {node} {
     }
 
     const Block& node;
@@ -61,8 +61,8 @@ struct PBlock : PContent {
 
 struct PDivider : PContent {
     PDivider(Type::PNodeType type, const Divider& node, PNode* parent) :
-        PContent(type, node, parent),
-        node(node) {
+        PContent {type, node, parent},
+        node {node} {
     }
 
     const Divider& node;
@@ -70,20 +70,20 @@ struct PDivider : PContent {
 
 struct PHDivider : PDivider {
     PHDivider(const Divider& node, PNode* parent) :
-        PDivider(Type::HDivider, node, parent) {
+        PDivider {Type::HDivider, node, parent} {
     }
 };
 
 struct PVDivider : PDivider {
     PVDivider(const Divider& node, PNode* parent) :
-        PDivider(Type::VDivider, node, parent) {
+        PDivider {Type::VDivider, node, parent} {
     }
 };
 
 struct PContainer : PNode {
     PContainer(Type::PNodeType type, const Container& node, PNode* parent) :
-        PNode(type, node, parent),
-        node(node) {
+        PNode {type, node, parent},
+        node {node} {
     }
 
     const Container& node;
@@ -92,8 +92,8 @@ struct PContainer : PNode {
 
 struct PHLayout : PContainer {
     PHLayout(const HLayout& node, PNode* parent) :
-        PContainer(Type::HLayout, node, parent),
-        node(node) {
+        PContainer {Type::HLayout, node, parent},
+        node {node} {
     }
 
     const HLayout& node;
@@ -101,14 +101,14 @@ struct PHLayout : PContainer {
 
 struct PVLayout : PContainer {
     PVLayout(const VLayout& node, PNode* parent) :
-        PContainer(Type::VLayout, node, parent),
-        node(node) {
+        PContainer {Type::VLayout, node, parent},
+        node {node} {
     }
 
     const VLayout& node;
 };
 
-void Presenter::present(const Node& rootNode) {
+void Presenter::present(const Node& root_node) {
     /*
      * Example of a layout with the associated tree.
      *
@@ -143,7 +143,7 @@ void Presenter::present(const Node& rootNode) {
     // 1) First visit of the tree.
     //    - Wrap each node with a presentation node (wrapper that adds helpers).
     {
-        const auto makePNode = [](const Node& node, PNode* parent) -> std::unique_ptr<PNode> {
+        const auto make_pnode = [](const Node& node, PNode* parent) -> std::unique_ptr<PNode> {
             if (node.type == Node::Type::Block) {
                 return std::make_unique<PBlock>(static_cast<const Block&>(node), parent);
             } else if (node.type == Node::Type::Divider) {
@@ -159,7 +159,7 @@ void Presenter::present(const Node& rootNode) {
             return nullptr;
         };
 
-        root = makePNode(rootNode, nullptr);
+        root = make_pnode(root_node, nullptr);
 
         std::vector<PNode*> stack;
         stack.push_back(&*root);
@@ -173,7 +173,7 @@ void Presenter::present(const Node& rootNode) {
                 auto* c = static_cast<PContainer*>(node);
                 c->children.resize(c->node.children.size());
                 for (uint32_t i = 0; i < c->children.size(); i++) {
-                    c->children[i] = makePNode(*c->node.children[i], node);
+                    c->children[i] = make_pnode(*c->node.children[i], node);
                     stack.push_back(&*c->children[i]);
                 }
             }
@@ -204,8 +204,9 @@ void Presenter::present(const Node& rootNode) {
 
                 // Do not take ending empty lines into account for block's height
                 int32_t h = static_cast<int32_t>(b->node.lines.size()) - 1;
-                while (h >= 0 && b->node.lines[h].size() == 0)
+                while (h >= 0 && b->node.lines[h].size() == 0) {
                     h--;
+                }
                 b->height = std::max(0, h + 1);
 
                 if (b->node.width) {
@@ -260,10 +261,12 @@ void Presenter::present(const Node& rootNode) {
             PNode* node = stack.back();
             stack.pop_back();
 
-            if (!node->width)
+            if (!node->width) {
                 node->width = node->parent ? node->parent->width.value_or(0) : 0;
-            if (!node->height)
+            }
+            if (!node->height) {
                 node->height = node->parent ? node->parent->height.value_or(0) : 0;
+            }
 
             if (node->type & PNode::Type::Container) {
                 const auto* c = static_cast<const PContainer*>(node);
@@ -339,15 +342,15 @@ void Presenter::present(const Node& rootNode) {
                             auto* b = static_cast<PBlock*>(node);
 
                             // Present next line
-                            const Text& rawLine = b->node.lines[b->line];
+                            const Text& raw_line = b->node.lines[b->line];
                             Text t {};
                             uint32_t w = *b->width;
-                            if (rawLine.size() < w)
-                                t = rawLine.rpad(Text::Length {w});
-                            else if (rawLine.size() > w)
-                                t = rawLine.substr(Text::RawIndex {0}, Text::Length {w});
+                            if (raw_line.size() < w)
+                                t = raw_line.rpad(Text::Length {w});
+                            else if (raw_line.size() > w)
+                                t = raw_line.substr(Text::RawIndex {0}, Text::Length {w});
                             else
-                                t = rawLine;
+                                t = raw_line;
                             os << t.str();
 
                             // Always push the reset attribute in case substr truncated it
@@ -365,16 +368,18 @@ void Presenter::present(const Node& rootNode) {
                     }
 
                     // Go to a new line if this is an ending content
-                    if (c->endl)
+                    if (c->endl) {
                         os << std::endl;
+                    }
 
                     c->line++;
                 } else if (node->node.type == Node::Type::HLayout) {
                     auto* h = static_cast<PHLayout*>(node);
                     // Push reversed to visit pre-order
                     // Always push all the nodes: they are all processed in parallel.
-                    for (int32_t i = static_cast<int32_t>(h->children.size()) - 1; i >= 0; i--)
+                    for (int32_t i = static_cast<int32_t>(h->children.size()) - 1; i >= 0; i--) {
                         stack.push_back(&*h->children[i]);
+                    }
                 } else if (node->node.type == Node::Type::VLayout) {
                     auto* v = static_cast<PVLayout*>(node);
                     if (!v->children.empty()) {
@@ -382,8 +387,9 @@ void Presenter::present(const Node& rootNode) {
                         // If every node is done, we push the last one,
                         // so that it will fill the remaining space.
                         uint32_t i = 0;
-                        while (i < v->children.size() - 1 && v->children[i]->done)
+                        while (i < v->children.size() - 1 && v->children[i]->done) {
                             i++;
+                        }
                         stack.push_back(&*v->children[i]);
                     }
                 }

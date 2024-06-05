@@ -9,12 +9,12 @@ namespace Tui {
 struct Token {
     template <typename T>
     Token(T&& str, uint32_t size) :
-        string(std::forward<T>(str)),
-        size(size) {
+        string {std::forward<T>(str)},
+        size {size} {
     }
 
     explicit Token(char ch) :
-        Token(std::string {ch}, 1) {
+        Token {std::string {ch}, 1} {
     }
 
     std::string string;

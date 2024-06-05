@@ -46,15 +46,14 @@ public:
 
     friend Text operator+(const Text& text1, const Text& text2);
 
-    [[nodiscard]] std::string str() const;
-    [[nodiscard]] Length size() const;
-    [[nodiscard]] Text substr(RawIndex start) const;
-    [[nodiscard]] Text substr(RawIndex start, RawLength len) const;
-    [[nodiscard]] Text substr(RawIndex start, Length len) const;
-    [[nodiscard]] Text rpad(Length len, char ch = ' ') const;
-    [[nodiscard]] Text lpad(Length len, char ch = ' ') const;
-    [[nodiscard]] std::optional<RawIndex> find(char ch, RawIndex pos = RawIndex {0},
-                                               RawLength len = RawLength {UINT32_MAX}) const;
+    std::string str() const;
+    Length size() const;
+    Text substr(RawIndex start) const;
+    Text substr(RawIndex start, RawLength len) const;
+    Text substr(RawIndex start, Length len) const;
+    Text rpad(Length len, char ch = ' ') const;
+    Text lpad(Length len, char ch = ' ') const;
+    std::optional<RawIndex> find(char ch, RawIndex pos = RawIndex {0}, RawLength len = RawLength {UINT32_MAX}) const;
 
 protected:
     std::vector<Token> tokens;

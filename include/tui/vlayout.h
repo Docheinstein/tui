@@ -8,7 +8,7 @@
 namespace Tui {
 struct VLayout : Container {
     explicit VLayout() :
-        Container(Node::Type::VLayout) {
+        Container {Node::Type::VLayout} {
     }
 };
 } // namespace Tui

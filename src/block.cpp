@@ -14,15 +14,15 @@ Block& Tui::Block::operator<<(const Text& text) {
     // Split text in lines by \n
     Text::RawIndex i {0};
 
-    std::optional<Text::RawIndex> newLine;
+    std::optional<Text::RawIndex> new_line;
     do {
-        newLine = text.find('\n', i);
-        if (newLine) {
-            lines.back() += text.substr(i, Text::RawLength {*newLine - i});
+        new_line = text.find('\n', i);
+        if (new_line) {
+            lines.back() += text.substr(i, Text::RawLength {*new_line - i});
             lines.emplace_back();
-            i = Text::Index {*newLine + 1};
+            i = Text::Index {*new_line + 1};
         }
-    } while (newLine);
+    } while (new_line);
 
     lines.back() += text.substr(i);
 
