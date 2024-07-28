@@ -277,7 +277,42 @@ void Presenter::present(const Node& root_node) {
         }
     }
 
-    // 4) Find ending blocks (the ones at the right of the entire content)
+    // 4) Update block's width to fill containers space.
+    //    This applies to:
+    //    * All the blocks of vertical layouts.
+    //    * Last blocks of horizontal layouts.
+    {
+        std::vector<PNode*> stack {&*root};
+
+        while (!stack.empty()) {
+            PNode* node = stack.back();
+            stack.pop_back();
+
+            if (node->type & PNode::Type::Container) {
+                const auto* c = static_cast<PContainer*>(node);
+
+                if (node->type & PNode::Type::HLayout) {
+                    // The last child fills the remaining horizontal layout width
+                    uint32_t children_width = 0;
+                    for (uint32_t i = 0; i < c->children.size() - 1; i++) {
+                        children_width += *c->children[i]->width;
+                    }
+                    c->children.back()->width = *node->width - children_width;
+                } else if (node->type & PNode::Type::VLayout) {
+                    // All the children fills the entire the vertical layout width
+                    for (auto& child : c->children) {
+                        child->width = node->width;
+                    }
+                }
+
+                for (const auto& n : c->children) {
+                    stack.push_back(&*n);
+                }
+            }
+        }
+    }
+
+    // 5) Find ending blocks (the ones at the right of the entire content)
     //    An ending block is defined by the following rule:
     //    A block is an ending block unless it is not part of the rightmost
     //    branch of any Horizontal Layout ancestors it has.
@@ -305,7 +340,7 @@ void Presenter::present(const Node& root_node) {
         }
     }
 
-    // 5) Presentation.
+    // 6) Presentation.
     //    The logic is the following:
     //
     //    [Container]
