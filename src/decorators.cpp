@@ -7,6 +7,14 @@
 #define ATTRIBUTIZE(c, t) ATTR(c) + t + RESET()
 
 namespace Tui {
+Text color(Text&& text, uint8_t code) {
+    return Decorator {"\033[38;5;" + std::to_string(code) + "m"} + text + Decorator {"\033[0m"};
+}
+
+Text attr(Text&& text, uint8_t code) {
+    return Decorator {"\033[" + std::to_string(code) + "m"} + text + Decorator {"\033[0m"};
+}
+
 Text bold(Text&& text) {
     return ATTRIBUTIZE(1, text);
 }

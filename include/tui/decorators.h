@@ -7,9 +7,11 @@ namespace Tui {
 
 template <uint8_t code>
 Text color(Text&& text);
+Text color(Text&& text, uint8_t code);
 
 template <uint8_t code>
 Text attr(Text&& text);
+Text attr(Text&& text, uint8_t code);
 
 Text bold(Text&& text);
 
