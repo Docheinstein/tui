@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <optional>
+#include <cstdint>
 
 namespace Tui {
 struct Block;
