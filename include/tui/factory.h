@@ -10,7 +10,7 @@ struct Block;
 struct HLayout;
 struct VLayout;
 struct Divider;
-struct Text;
+class Text;
 
 std::unique_ptr<Block> make_block(std::optional<uint32_t> width = std::nullopt);
 std::unique_ptr<HLayout> make_horizontal_layout();
